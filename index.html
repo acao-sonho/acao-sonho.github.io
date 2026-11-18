@@ -167,7 +167,7 @@ async function abre(p){
     .map(k=>{const l=D.lojas.find(x=>x.n===k);return (l?l.n+' '+l.nome:k)+' ('+p.e[k][0]+')';});
   fb.innerHTML=`<div class="faixa">${p.a?'✓ PERTENCE À AÇÃO':'✕ NÃO PERTENCE À AÇÃO'}</div>
    <button class="fechar" id="fx" aria-label="Fechar">×</button>
-   <div class="ft"><span class="sf" id="fimg">${p.f?'carregando foto…':'sem foto'}</span></div>
+   <div class="ft"><span class="sf" id="fimg">${p.f?'carregando foto…':(p.x?'Esta referência não está na lista oficial da ação.':'sem foto')}</span></div>
    <div class="tx"><span class="nm" id="fnm">${p.n||'Produto sem nome no cadastro'}</span><span class="rf">Referência ${p.r} · ${p.c}</span>
    ${p.pa?`<span class="preco">${p.po>p.pa?`<s>${brl(p.po)}</s> `:''}<b>${brl(p.pa)}</b></span>`:''}
    ${es?(zero?`<div class="est zero">ZERADO NA SUA LOJA</div>`:`<div class="est"><b>${es.q} ${es.q===1?'peça':'peças'} na sua loja</b><div class="tams">Tamanhos: ${es.t||'–'}</div></div>`):`<div class="est">Escolha sua loja no topo para ver o estoque. Rede: ${total(p)} peças.</div>`}
@@ -183,7 +183,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')fecha();});
 /* busca por código: o código de barras começa pela referência (5 dígitos) */
 function porCodigo(t){
   const d=String(t).replace(/\D/g,''); if(d.length<4)return null;
-  return D.p.find(p=>p.r===d)||D.p.find(p=>d.length>=12&&d.startsWith(p.r)&&p.r.length===6)||D.p.find(p=>d.length>=5&&p.r===d.slice(0,5));
+  return D.p.find(p=>p.r===d)||D.p.find(p=>d.length>=12&&d.startsWith(p.r)&&p.r.length===6)||D.p.find(p=>d.length>=5&&p.r===d.slice(0,5))||(d.length>=5?{r:d.slice(0,5),n:'Referência fora da lista da ação',c:'não está na lista',a:0,f:0,e:{},x:1}:null);
 }
 function status(t,err){const s=$('status');s.textContent=t||'';s.className='status'+(err?' err':'');}
 $('form').onsubmit=e=>{e.preventDefault();const p=porCodigo($('q').value);if(p){abre(p);status('');}else{filtra();}$('q').blur();};
@@ -198,7 +198,7 @@ function zx(cv){if(!window.ZXing)return null;try{const h=new Map();h.set(ZXing.D
 async function decodifica(im){if(native){try{const r=await native.detect(im);if(r&&r[0])return r[0].rawValue;}catch(e){}}
   await loadZX();for(const m of [1400,900,2000])for(const rot of [false,true]){const t=zx(drawTo(im,m,rot));if(t)return t;}return null;}
 let stream=null,loopId=0,liveOff=!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)||window.self!==window.top;
-function achou(t){$('q').value=t;const p=porCodigo(t);if(p){status('Código '+t);abre(p);}else status('O código '+t+' não está em nenhuma das listas da ação. Confira com a supervisão.',true);}
+function achou(t){$('q').value=t;const p=porCodigo(t);if(p){status('Código '+t);abre(p);}else status('Não consegui identificar a referência no código '+t+'. Digite a referência.',true);}
 async function startLive(){
   try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});}
   catch(e){liveOff=true;status('A câmera não abriu. Toque de novo em "Ler código" para fotografar a etiqueta.',true);return;}
@@ -220,7 +220,7 @@ $('file').onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value=
   im.onload=async()=>{const t=await decodifica(im);URL.revokeObjectURL(url);
     if(!t){status('Não achei o código na foto. Chegue mais perto, com a etiqueta reta e bem iluminada, ou digite a referência.',true);return;}
     $('q').value=t;const p=porCodigo(t);
-    if(p){status('Código '+t);abre(p);} else status('O código '+t+' não está em nenhuma das listas da ação. Confira com a supervisão.',true);};
+    if(p){status('Código '+t);abre(p);} else status('Não consegui identificar a referência no código '+t+'. Digite a referência.',true);};
   im.onerror=()=>status('Não consegui abrir a foto.',true);im.src=url;};
 
 /* filtros */
