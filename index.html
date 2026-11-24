@@ -120,7 +120,7 @@ try{LOJA=localStorage.getItem('acao_loja')||'';}catch(e){}
 /* fotos em pacotes, carregadas quando o cartão aparece na tela */
 const pk={},pkP={};
 function pacote(i){ if(pk[i])return Promise.resolve(pk[i]);
-  if(!pkP[i])pkP[i]=fetch('f/p'+i+'.json?v=202611240859').then(r=>r.json()).then(j=>pk[i]=j).catch(()=>{pkP[i]=null;return {};});
+  if(!pkP[i])pkP[i]=fetch('f/p'+i+'.json?v=202611240932').then(r=>r.json()).then(j=>pk[i]=j).catch(()=>{pkP[i]=null;return {};});
   return pkP[i]; }
 async function foto(ref){ if(!D)return null; const j=await pacote(parseInt(ref,10)%D.np); return j[ref]?'data:image/jpeg;base64,'+j[ref]:null; }
 const io=('IntersectionObserver' in window)?new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);pinta(e.target);}})},{rootMargin:'300px'}):null;
@@ -148,6 +148,8 @@ function filtra(){
   const q=norm($('q').value.trim());
   lista=D.p.filter(p=>(fA===''||String(p.a)===fA)&&(!fC||p.c===fC)&&(!soEst||!LOJA||(p.e[LOJA]&&p.e[LOJA][0]>0))&&
     (!q||casa(p,q)));
+  const tem=p=>LOJA?((p.e[LOJA]&&p.e[LOJA][0]>0)?1:0):(total(p)>0?1:0);
+  lista=lista.map((p,i)=>[p,i]).sort((a,b)=>tem(b[0])-tem(a[0])||a[1]-b[1]).map(x=>x[0]);
   lim=60; desenha();
 }
 function desenha(){
@@ -231,7 +233,7 @@ $('fa').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)ret
 $('fc').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;fC=b.dataset.c;$('fc').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c===b));filtra();});
 $('loja').onchange=()=>{LOJA=$('loja').value;try{localStorage.setItem('acao_loja',LOJA);}catch(e){}status('');filtra();};
 
-fetch('dados.json?v=202611240859').then(r=>r.json()).then(d=>{D=d;
+fetch('dados.json?v=202611240932').then(r=>r.json()).then(d=>{D=d;
   const sel=$('loja');d.lojas.forEach(l=>{const o=document.createElement('option');o.value=l.n;o.textContent=l.n+' · '+l.nome;sel.appendChild(o);});
   if(LOJA&&d.lojas.some(l=>l.n===LOJA))sel.value=LOJA;else LOJA='';
   const cats={};d.p.forEach(p=>cats[p.c]=(cats[p.c]||0)+1);
