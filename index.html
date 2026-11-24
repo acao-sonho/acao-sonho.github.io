@@ -1,6 +1,7 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#B5653E"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
-<title>Ação Leve 3 Pague 2</title>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#B5653E"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}.preco .off{display:inline-block;background:var(--ok,#2e7d32);color:#fff;border-radius:6px;padding:1px 6px;font-size:.85em;margin-left:4px}
+</style>
+<title>Ação 50%</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: barra fixa de busca e leitura no topo, grade de cartões de produto; ao ler um código abre a ficha grande com a borda do status */
@@ -81,7 +82,7 @@ main .wrap{padding-block:12px 40px}
 
 </head><body>
 <header><div class="wrap">
-  <div class="tit"><h1>Ação <b>Leve 3 Pague 2</b></h1>
+  <div class="tit"><h1>Ação <b>50% OFF</b> · produtos selecionados</h1>
     <label for="loja" style="position:absolute;left:-9999px">Sua loja</label>
     <select id="loja"><option value="">Escolha sua loja</option></select></div>
   <form class="busca" id="form" autocomplete="off">
@@ -169,8 +170,8 @@ async function abre(p){
    <button class="fechar" id="fx" aria-label="Fechar">×</button>
    <div class="ft"><span class="sf" id="fimg">${p.f?'carregando foto…':(p.x?'Esta referência não está na lista oficial da ação.':'sem foto')}</span></div>
    <div class="tx"><span class="nm" id="fnm">${p.n||'Produto sem nome no cadastro'}</span><span class="rf">Referência ${p.r} · ${p.c}</span>
-   ${p.pa?`<span class="preco">${p.po>p.pa?`<s>${brl(p.po)}</s> `:''}<b>${brl(p.pa)}</b></span>`:''}
-   ${es?(zero?`<div class="est zero">ZERADO NA SUA LOJA</div>`:`<div class="est"><b>${es.q} ${es.q===1?'peça':'peças'} na sua loja</b><div class="tams">Tamanhos: ${es.t||'–'}</div></div>`):`<div class="est">Escolha sua loja no topo para ver o estoque. Rede: ${total(p)} peças.</div>`}
+   ${p.pa?`<span class="preco">${p.po>p.pa?`<s>${brl(p.po)}</s> `:''}<b>${brl(p.pa)}</b>${p.po>p.pa?` <span class="off">−${Math.round(100-100*p.pa/p.po)}%</span>`:''}</span>`:''}
+   ${es?(zero?`<div class="est zero">ZERADO NA SUA LOJA</div>`:`<div class="est"><b>${es.q} ${es.q===1?'peça':'peças'} na sua loja</b>${es.t?`<div class="tams">Tamanhos: ${es.t}</div>`:''}</div>`):`<div class="est">Escolha sua loja no topo para ver o estoque. Rede: ${total(p)} peças.</div>`}
    ${outras.length?`<span class="outras">Tem em: ${outras.join(' · ')}</span>`:''}</div>`;
   $('ficha').hidden=false; $('fx').onclick=fecha; $('fx').focus();
   if(navigator.vibrate)navigator.vibrate(p.a?60:[120,80,120]);
